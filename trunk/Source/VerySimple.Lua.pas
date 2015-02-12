@@ -49,15 +49,18 @@ interface
 {$M+}
 
 uses
+{$IF defined(POSIX)}
+  Posix.Dlfcn, Posix.SysTypes, Posix.StdDef,
+{$ENDIF}
+
 {$IF defined(MSWINDOWS)}
   Winapi.Windows,
 {$ELSEIF defined(MACOS)}
   {$IFDEF IOS}
     {$DEFINE STATICLIBRARY}
   {$ENDIF}
-  Posix.SysTypes, Posix.StdDef,
+
 {$ELSEIF defined(ANDROID)}
-  Posix.SysTypes, Posix.StdDef,
 {$ENDIF}
   System.Rtti, System.Classes, System.SysUtils, System.IOUtils, Generics.Collections,
   VerySimple.Lua.Lib;
@@ -174,7 +177,7 @@ type
   TLuaProc = function(L: Lua_State): Integer of object; // Lua Function
 
 var
-  LibraryHandle: Integer;
+  LibraryHandle: HMODULE;
 
 {*
 ** Message handler used to run all chunks
@@ -808,7 +811,9 @@ function GetLibraryFolder: String;
 begin
 {$IFDEF MSWINDOWS}
   Result := '';
-{$ELSE}
+{$ELSEIF defined(MACOS)}
+  Result := '';
+ {$ELSE}
   Result := IncludeTrailingPathDelimiter(System.IOUtils.TPath.GetLibraryPath);
   Result := TPath.GetDocumentsPath + PathDelim;
 //  Result := ExtractFilePath(Paramstr(0))+'';
@@ -853,7 +858,8 @@ begin
   // try to load the library
   LibraryHandle := LoadLibrary(PChar(LoadPath));
   if LibraryHandle = 0 then
-    raise ELuaLibraryLoadError.Create('Failed to load Lua library "' + QuotedStr(LoadPath) + '"');
+    raise ELuaLibraryLoadError.Create('Failed to load Lua library "' + QuotedStr(LoadPath) + '"'
+      {$IF defined(POSIX)} + (String(dlerror)){$ENDIF});
 
   lua_newstate := GetAddress('lua_newstate');
   lua_close := GetAddress('lua_close');
