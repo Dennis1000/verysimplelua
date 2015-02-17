@@ -14,7 +14,8 @@ var
 begin
   try
     (* Example 2 - Extend Lua with own class *)
-    Lua := TMyLua.Create('..\..\DLL\Win32\');
+    Lua := TMyLua.Create;
+    Lua.LibraryPath := '..\..\DLL\Win32\' + LUA_LIBRARY;
     Lua.DoFile('example2.lua');
     Lua.Free;
     readln;

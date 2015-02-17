@@ -13,7 +13,8 @@ var
 begin
   try
     (* Example 1 - Simple Lua Script Execution *)
-    Lua := TVerySimpleLua.Create('..\..\DLL\Win32\');
+    Lua := TVerySimpleLua.Create;
+    Lua.LibraryPath := '..\..\DLL\Win32\' + LUA_LIBRARY;
     Lua.DoFile('example1.lua');
     Lua.Free;
     readln;
