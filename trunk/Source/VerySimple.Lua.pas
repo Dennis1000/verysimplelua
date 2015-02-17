@@ -12,7 +12,7 @@ History
                 Rewrite of Delphi register functions
                 Removed Class only functions
                 Removed a lot of convenience overloaded functions
-                Support for mobile version
+                Support for mobile compiler
 1.4     DS      Rewrite of Lua function calls, they use now published static
                 methods, no need for a Callbacklist required anymore
                 Added Package functions
@@ -77,22 +77,23 @@ type
     FLuaState: Lua_State;  // Lua instance
     FOnPrint: TOnLuaPrint;
     FFilePath: String;
+    FLibraryPath: String;
+    FAutoRegister: boolean;
+    FOpened: Boolean;
   protected
     procedure DoPrint(Msg: String); virtual;
     function DoChunk(L: Lua_State; Status: Integer): Integer; virtual;
-    function DoCall (L: Lua_State; NArg, NRes: Integer): Integer; virtual;
-    class function _createObject(L: lua_State): Integer; static; cdecl;
-    class function _destroyObject(L: lua_State): Integer; static; cdecl;
+    function DoCall(L: Lua_State; NArg, NRes: Integer): Integer; virtual;
     class function ValidMethod(Method: TRttiMethod): Boolean; virtual;
 
     // Internal package registration
     class procedure RegisterPackage(L: lua_State; Data: Pointer; Code: Pointer; PackageName: String); overload; virtual;
-
   public
     // constructor with Autoregister published functions or without (default)
-    constructor Create(LibraryPath: String=''); overload; virtual;
-    constructor Create(AutoRegister: Boolean; LibraryPath: String=''); overload; virtual;
+    constructor Create; virtual;
     destructor Destroy; override;
+    procedure Open; virtual;
+    procedure Close; virtual;
 
     // Convenience Lua function(s)
     function DoFile(Filename: String): Integer; virtual;// load file and execute
@@ -104,12 +105,13 @@ type
     class procedure PushFunction(L: lua_State; Data, Code: Pointer; FuncName: String);
 
     class procedure RegisterFunction(L: lua_State; Func: lua_CFunction; FuncName: String); overload; virtual;
+    procedure RegisterFunction(Func: lua_CFunction; FuncName: String); overload;  virtual;
+
     class procedure RegisterFunction(L: lua_State; Data: Pointer; Code: Pointer; FuncName: String); overload; virtual;
     class procedure RegisterFunction(L: lua_State; AClass: TClass; Func, FuncName: String); overload; virtual;
     class procedure RegisterFunction(L: lua_State; AObject: TObject; Func, FuncName: String); overload;  virtual;
     class procedure RegisterClassFunction(L: lua_State; AObject: TObject; Func, FuncName: String); overload;  virtual;
 
-    procedure RegisterFunction(Func: lua_CFunction; FuncName: String); overload;  virtual;
     procedure RegisterFunction(AClass: TClass; Func: String); overload; virtual;
     procedure RegisterFunction(AClass: TClass; Func, FuncName: String); overload; virtual;
     procedure RegisterFunction(AObject: TObject; Func, FuncName: String); overload; virtual;
@@ -123,13 +125,6 @@ type
     // automatically register all functions published by a class or an object
     procedure RegisterFunctions(AClass: TClass); overload; virtual;
     procedure RegisterFunctions(AObject: TObject); overload; virtual;
-
-    // functions for registering new lua classes
-    class procedure RegisterClass(L: lua_State; AClass: TClass; Classname: String; AObjectClass: TClass); overload; virtual;
-
-    procedure RegisterClass(AClass: TClass); overload; virtual;
-    procedure RegisterClass(AClass: TClass; Classname: String); overload; virtual;
-    procedure RegisterClass(AClass: TClass; Classname: String; AObjectClass: TClass); overload; virtual;
 
     // ***
     // package register functions
@@ -159,8 +154,11 @@ type
     // ***
     // properties
     // ***
+    property AutoRegister: Boolean read FAutoRegister write FAutoRegister;
     property FilePath: String read FFilePath write FFilePath;
+    property LibraryPath: String read FLibraryPath write FLibraryPath;
     property OnPrint: TOnLuaPrint read FOnPrint write FOnPrint;
+    property Opened: Boolean read FOpened;
     property LuaState: Lua_State read FLuaState write FLuaState;
 
   published
@@ -187,11 +185,13 @@ var
   Msg: MarshaledAString;
 begin
   Msg := lua_tostring(L, 1);
-  ShowMessage(Msg);
   if (Msg = NIL) then  //* is error object not a string?
-{    if (luaL_callmeta(L, 1, "__tostring") &&  //* does it have a metamethod */
-        lua_type(L, -1) == LUA_TSTRING)  //* that produces a string? */
-      return 1;  //* that is the message */}
+    if (luaL_callmeta(L, 1, '__tostring') <> 0) and  //* does it have a metamethod */
+        (lua_type(L, -1) = LUA_TSTRING) then  //* that produces a string? */
+      begin
+        Result := 1;  //* that is the message */}
+        Exit;
+      end
     else
       Msg := lua_pushfstring(L, '(error object is a %s value)',
                                [luaL_typename(L, 1)]);
@@ -238,41 +238,31 @@ begin
 end;
 
 
-{ TLua }
+{ TVerySimpleLua }
 
-constructor TVerySimpleLua.Create(LibraryPath: String='');
+
+
+procedure TVerySimpleLua.Close;
 begin
-  Create(True, LibraryPath);
+  if not FOpened then
+    Exit;
+
+  FOpened := False;
+
+  // Close instance
+  Lua_Close(LuaState);
 end;
 
-
-//
-// Create a new Lua instance and optionally create Lua functions
-//
-// @param       Boolean      AutoRegister       (optional)
-// @return      TLua                            Lua Instance
-//
-constructor TVerySimpleLua.Create(AutoRegister: Boolean; LibraryPath: String='');
+constructor TVerySimpleLua.Create;
 begin
-  inherited Create;
+  FAutoRegister := True;
 
-  // Load Lua Lib if not already done
-  if (not LuaLibraryLoaded) then
-    LoadLuaLibrary(LibraryPath);
-
-  // Open Library
-  LuaState := lual_newstate; // opens Lua
-  lual_openlibs(LuaState); // load all libs
-
-  // register all published functions
-   if (AutoRegister) then
-     RegisterFunctions(Self);
-
- {$IF defined(MSWINDOWS)}
-  FilePath := '';
- {$ELSE}
+  {$IF defined(IOS)}
   FilePath := TPath.GetDocumentsPath + PathDelim;
- {$ENDIF}
+  {$ELSEIF defined(ANDROID)}
+  LibraryPath := IncludeTrailingPathDelimiter(System.IOUtils.TPath.GetLibraryPath) + LUA_LIBRARY;
+  FilePath := TPath.GetDocumentsPath + PathDelim;
+  {$ENDIF}
 end;
 
 
@@ -282,10 +272,10 @@ end;
 
 destructor TVerySimpleLua.Destroy;
 begin
-  // Close instance
-  Lua_Close(LuaState);
+  Close;
   inherited;
 end;
+
 
 //
 // Wrapper for Lua File load and Execution
@@ -296,9 +286,9 @@ end;
 
 function TVerySimpleLua.DoChunk(L: Lua_State; Status: Integer): Integer;
 begin
-  if (Status = LUA_OK) then
+  if Status = LUA_OK then
     Status := DoCall(L, 0, 0);
-//  Result := Report(L, Status);
+  Result := Status;
 end;
 
 {*
@@ -323,6 +313,9 @@ var
   Marshall: TMarshaller;
   Path: String;
 begin
+  if not Opened then
+    Open;
+
   Path := FilePath + FileName;
   Result := dochunk(LuaState, lual_loadfile(LuaState, Marshall.AsAnsi(Path).ToPointer));
 end;
@@ -341,42 +334,12 @@ function TVerySimpleLua.DoString(Value: String): Integer;
 var
   Marshall: TMarshaller;
 begin
+  if not Opened then
+    Open;
+
   Result := luaL_dostring(LuaState, Marshall.AsAnsi(Value).ToPointer);
 end;
 
-{
-//
-// Register a new Lua Function and map it to the Objects method name
-//
-// @param       AnsiString      FuncName        Lua Function Name
-// @param       AnsiString      MethodName      (optional) Objects Method name
-//
-procedure TVerySimpleLua.RegisterFunction(FuncName: String; MethodName: String; Obj: TObject);
-var
-  Marshall: TMarshaller;
-begin
-  // if method name not specified use Lua function name
-  if (MethodName = '') then
-    MethodName := FuncName;
-
-  // if not object specified use this object
-  if (Obj = NIL) then
-    Obj := Self;
-
-  // prepare Closure value (Method Name)
-  lua_pushstring(LuaState, Marshall.AsAnsi(FuncName).ToPointer);
-
-  // prepare Closure value (CallBack Object Pointer)
-  lua_pushlightuserdata(LuaState, Obj);
-  lua_pushlightuserdata(LuaState, Obj.MethodAddress(String(MethodName)));
-
-  // set new Lua function with Closure values
-  lua_pushcclosure(LuaState, LuaCallBack, 2);
-
-  // set table using the method's name
-  lua_setglobal(LuaState, Marshall.AsAnsi(FuncName).ToPointer);
-end;
-}
 
 function TVerySimpleLua.Run: Integer;
 begin
@@ -599,125 +562,6 @@ begin
   RegisterFunctions(LuaState, AObject);
 end;
 
-class function TVerySimpleLua._createObject(L: lua_State): Integer;
-{var
-  AClass: TClass;
-  AObject: TObject;
-  MethodTable: PAnsiChar;
-  MethodRec: PMethodRec;
-  MethodCount: Integer;
-  I: Integer;
-begin
-  // get class pointer
-  AClass := lua_topointer(L, lua_upvalueindex(1));
-
-  // create new object
-  if (@CreateObject = NIL) then
-    AObject := AClass.Create
-  else
-    AObject := CreateObject(L, AClass);
-
-  // Get a pointer to the class's published method table and
-  // iterate through all the published methods of this class
-  MethodTable := GetMethodTable(AClass);
-  if (MethodTable <> Nil) then
-  begin
-    MethodCount := GetMethodCount(MethodTable);
-    MethodRec := PMethodRec(MethodTable + 2);
-    for I := 1 to MethodCount do
-    begin
-      // set new object functions with object as closure
-      lua_pushstring(L, PAnsiChar(AnsiString(MethodRec.sName)));
-      lua_pushlightuserdata(L, AObject);
-      lua_pushcclosure(L, MethodRec.pCode, 1);
-      lua_rawset(L, -3);
-
-      // next method
-      MethodRec := GetMethodNextRec(MethodRec);
-    end;
-  end;
-
-  // add destroy function
-  lua_pushstring(L, ObjectDestroyFuncName);
-  lua_pushlightuserdata(L, AObject);
-  lua_pushcclosure(L, @TVerySimpleLua._destroyObject , 1);
-  lua_rawset(L, -3);
-  result := 0;}
-begin
-end;
-
-class function TVerySimpleLua._destroyObject(L: lua_State): Integer;
-var
-  AObject: TObject;
-begin
-  AObject := lua_topointer(L, lua_upvalueindex(1));
-  AObject.Free;
-  result := 0;
-end;
-
-class procedure TVerySimpleLua.RegisterClass(L: lua_State; AClass: TClass;
-  Classname: String; AObjectClass: TClass);
-{var
-  MethodTable: PAnsiChar;
-  MethodRec: PMethodRec;
-  MethodCount: Integer;
-  I: Integer;
-begin
-  // create a new table only if it does not exists yet
-  lua_getglobal(L, PAnsiChar(AnsiString(Classname)));
-  if (not lua_istable(L, -1)) then
-  begin
-    lua_pop(L, 1); // remove empty value from top
-    lua_newtable(L); // create new table
-    lua_setglobal(L, PAnsiChar(AnsiString(Classname)));
-    lua_getglobal(L, PAnsiChar(AnsiString(Classname)));
-  end;
-
-  // new function with AObjectClass pointer closure
-  // set new Lua function with Closure value
-  lua_pushstring(L, ObjectCreateFuncName);
-  lua_pushlightuserdata(L, AObjectClass);
-  lua_pushcclosure(L, @TVerySimpleLua._createObject, 1);
-  lua_rawset(L, -3);
-
-  // Get a pointer to the class's published method table
-  // and iterate through all published methods of the class
-  MethodTable := GetMethodTable(AClass);
-  if (MethodTable <> Nil) then
-  begin
-    MethodCount := GetMethodCount(MethodTable);
-    MethodRec := PMethodRec(MethodTable + 2);
-    for I := 1 to MethodCount do
-    begin
-      // set new Lua function with Closure value
-      // prepare Closure value (CallBack Object Pointer)
-      lua_pushstring(L, PAnsiChar(AnsiString(MethodRec.sName)));
-      lua_pushlightuserdata(L, AClass);
-      lua_pushcclosure(L, MethodRec.pCode, 1);
-      lua_rawset(L, -3);
-      MethodRec := GetMethodNextRec(MethodRec);
-    end;
-  end;}
-begin
-end;
-
-
-procedure TVerySimpleLua.RegisterClass(AClass: TClass; Classname: String;
-  AObjectClass: TClass);
-begin
-  RegisterClass(LuaState, AClass, Classname, AObjectClass);
-end;
-
-
-procedure TVerySimpleLua.RegisterClass(AClass: TClass; Classname: String);
-begin
-  RegisterClass(LuaState, AClass, Classname, AClass);
-end;
-
-procedure TVerySimpleLua.RegisterClass(AClass: TClass);
-begin
-  RegisterClass(LuaState, AClass, AClass.ClassName, AClass);
-end;
 
 
 // *******************************
@@ -807,20 +651,6 @@ end;
 ** Dynamic library manipulation
 *)
 
-function GetLibraryFolder: String;
-begin
-{$IFDEF MSWINDOWS}
-  Result := '';
-{$ELSEIF defined(MACOS)}
-  Result := '';
- {$ELSE}
-  Result := IncludeTrailingPathDelimiter(System.IOUtils.TPath.GetLibraryPath);
-  Result := TPath.GetDocumentsPath + PathDelim;
-//  Result := ExtractFilePath(Paramstr(0))+'';
-{$ENDIF}
-  //Result := '@executable_path/';
-end;
-
 
 function GetAddress(Name: String): Pointer;
 begin
@@ -844,12 +674,11 @@ begin
   FreeLuaLibrary;
 
   if LibraryPath = '' then
-    LoadPath := GetLibraryFolder
+    LoadPath := LUA_LIBRARY
   else
     LoadPath := LibraryPath;
 
 {$IFNDEF STATICLIBRARY}
-  LoadPath := LoadPath + LUA_LIBRARY;
 
   // check if Library exists
   if not FileExists(LoadPath) then
@@ -1036,6 +865,26 @@ begin
   Result := (LibraryHandle <> 0);
 end;
 
+
+procedure TVerySimpleLua.Open;
+begin
+  if FOpened then
+    Exit;
+
+  FOpened := True;
+
+  // Load Lua Lib if not already done
+  if not LuaLibraryLoaded then
+    LoadLuaLibrary(LibraryPath);
+
+  // Open Library
+  LuaState := lual_newstate; // opens Lua
+  lual_openlibs(LuaState); // load all libs
+
+  // register all published functions
+   if FAutoRegister then
+     RegisterFunctions(Self);
+end;
 
 class procedure TVerySimpleLua.FreeLuaLibrary;
 begin
