@@ -610,6 +610,10 @@ var
   function lua_setupvalue(L: lua_State; funcindex, n: Integer): MarshaledAString; cdecl; external LUA_LIBRARY;
   function lua_upvalueid(L: lua_State; fidx, n: Integer): Pointer; cdecl; external LUA_LIBRARY;
   procedure lua_upvaluejoin(L: lua_State; fix1, n1, fidx2, n2: Integer); cdecl; external LUA_LIBRARY;
+  procedure lua_sethook(L: lua_State; func: lua_Hook; mask: Integer; count: Integer); cdecl;
+  function lua_gethook(L: lua_State): lua_Hook; cdecl;
+  function lua_gethookmask(L: lua_State): Integer; cdecl;
+  function lua_gethookcount(L: lua_State): Integer; cdecl;
 {$ELSE}
   lua_getstack: function(L: lua_State; level: Integer; ar: Plua_Debug): Integer; cdecl;
   lua_getinfo: function(L: lua_State; const what: MarshaledAString; ar: Plua_Debug): Integer; cdecl;
@@ -619,6 +623,10 @@ var
   lua_setupvalue: function(L: lua_State; funcindex, n: Integer): MarshaledAString; cdecl;
   lua_upvalueid: function(L: lua_State; fidx, n: Integer): Pointer; cdecl;
   lua_upvaluejoin: procedure(L: lua_State; fix1, n1, fidx2, n2: Integer); cdecl;
+  lua_sethook: procedure(L: lua_State; func: lua_Hook; mask: Integer; count: Integer); cdecl;
+  lua_gethook: function(L: lua_State): lua_Hook; cdecl;
+  lua_gethookmask: function(L: lua_State): Integer; cdecl;
+  lua_gethookcount: function(L: lua_State): Integer; cdecl;
 {$ENDIF}
 
 

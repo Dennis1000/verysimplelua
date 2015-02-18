@@ -792,6 +792,11 @@ begin
   lua_upvalueid := GetAddress('lua_upvalueid');
   lua_upvaluejoin := GetAddress('lua_upvaluejoin');
 
+  lua_sethook := GetAddress('lua_sethook');
+  lua_gethook := GetAddress('lua_gethook');
+  lua_gethookmask := GetAddress('lua_gethookmask');
+  lua_gethookcount := GetAddress('lua_gethookcount');
+
   luaopen_base := GetAddress('luaopen_base');
   luaopen_coroutine := GetAddress('luaopen_coroutine');
   luaopen_table := GetAddress('luaopen_table');
