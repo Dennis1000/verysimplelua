@@ -2,7 +2,7 @@
 VerySimple.Lua - Lua 5.3.0 for Delphi XE5-XE7
 =============================================
 (c) 2009-2015 Dennis D. Spreen
-http://blog.spreendigital.de/
+http://blog.spreendigital.de/2015/02/18/verysimple-lua-2-0-a-cross-platform-lua-5-3-0-wrapper-for-delphi-xe5-xe7/
 
 History
 2.0     DS      Updated Lua Lib to 5.3.0
@@ -80,7 +80,7 @@ print (p2);
 
 
 **************************************************************************
-Copyright 2015  Dennis D. Spreen (http://www.spreendigital.de/blog/)
+Copyright 2015  Dennis D. Spreen (http://blog.spreendigital.de/)
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
