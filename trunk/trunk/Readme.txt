@@ -28,10 +28,10 @@ automatically creates OOP callback functions for Delphi <-> Lua:
 
 
 uses
-  Lua, LuaLib;
+  VerySimple.Lua, VerySimple.Lua.Lib;
 
 type
-  TMyLua = class(TLua)
+  TMyLua = class(TVerySimpleLua)
   published
     function HelloWorld(LuaState: TLuaState): Integer;
   end;
@@ -60,7 +60,7 @@ end;
 
 
 var
-  MyLua: TLua;
+  MyLua: TVerySimpleLua;
 
 begin
   MyLua := TMyLua.Create;
