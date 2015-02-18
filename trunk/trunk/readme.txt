@@ -1,27 +1,30 @@
-=========================================
-VerySimple.Lua - Lua 5.3.0 for Delphi XE7
-=========================================
+=============================================
+VerySimple.Lua - Lua 5.3.0 for Delphi XE5-XE7
+=============================================
 (c) 2009-2015 Dennis D. Spreen
 http://blog.spreendigital.de/
 
 History
+2.0     DS      Updated Lua Lib to 5.3.0
+                Rewrite of Delphi register functions
+                Removed Class only functions
+                Removed a lot of convenience overloaded functions
+                Support for mobile compiler
+1.4     DS      Rewrite of Lua function calls, they use now published static
+                methods, no need for a Callbacklist required anymore
+                Added Package functions
+                Added Class registering functions
 1.3     DS      Improved Callback, now uses pointer instead of object index
                 Modified RegisterFunctions to allow methods from other class
                 to be registered, moved object table into TLua class
 1.2	DS	Added example on how to extend lua with a delphi dll
-1.1     DS      Improved global object table, optimized delphi
+1.1     DS      Improved global object table, this optimizes the delphi
                 function calls
 1.0     DS      Initial Release
 
 
-This is a Lua Wrapper for Delphi 2009 and 2010. It is based on 
-Lua-Pascal v0.2 by Marco Antonio Abreu (www.marcoabreu.eti.br):
- - converted PChar to PAnsiChar
- - converted Char to AnsiChar
- - added function LuaLibLoaded: Boolean;
- - added a new base class (TLua) with OOP call back functions
-
-TLua automatically creates OOP callback functions for Delphi <-> Lua:
+This is a Lua Wrapper for Delphi XE5-XE7 which 
+automatically creates OOP callback functions for Delphi <-> Lua:
 
 
 uses
@@ -77,7 +80,7 @@ print (p2);
 
 
 **************************************************************************
-Copyright 2009  Dennis D. Spreen (http://www.spreendigital.de/blog/)
+Copyright 2015  Dennis D. Spreen (http://www.spreendigital.de/blog/)
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
