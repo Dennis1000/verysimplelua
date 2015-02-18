@@ -5,6 +5,7 @@
  * @license     http://opensource.org/licenses/gpl-license.php GNU Public License
  * @author      Dennis D. Spreen <dennis@spreendigital.de>
  * @version     2.0
+ * @url		http://blog.spreendigital.de/2015/02/18/verysimple-lua-2-0-a-cross-platform-lua-5-3-0-wrapper-for-delphi-xe5-xe7/
  */
 
 History

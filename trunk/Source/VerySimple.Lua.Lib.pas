@@ -6,7 +6,7 @@
 *}
 
 {*
-** Translated to Delphi by Dennis D. Spreen
+** Translated to Delphi by Dennis D. Spreen <dennis@spreendigital.de>
 ** Notes:
     as lua_State is a not defined structure, it is not used as Plua_State
     LUA_VERSION suffixed by '_' for avoiding name collision
