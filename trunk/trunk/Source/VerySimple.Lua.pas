@@ -527,7 +527,7 @@ begin
       if not ValidMethod(LMethod) then
         Continue;
 
-       PushFunction(L, Self, LMethod.CodeAddress, LMethod.Name);
+       PushFunction(L, AObject, LMethod.CodeAddress, LMethod.Name);
        lua_rawset(L, -3);
     end;
   finally
