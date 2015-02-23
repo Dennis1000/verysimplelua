@@ -83,8 +83,6 @@ type
     FOpened: Boolean;
   protected
     procedure DoPrint(Msg: String); virtual;
-    function DoChunk(L: Lua_State; Status: Integer): Integer; virtual;
-    function DoCall(L: Lua_State; NArg, NRes: Integer): Integer; virtual;
     class function ValidMethod(Method: TRttiMethod): Boolean; virtual;
 
     // Internal package registration
@@ -99,6 +97,8 @@ type
     // Convenience Lua function(s)
     function DoFile(Filename: String): Integer; virtual;// load file and execute
     function DoString(Value: String): Integer; virtual;
+    function DoChunk(L: Lua_State; Status: Integer): Integer; virtual;
+    function DoCall(L: Lua_State; NArg, NRes: Integer): Integer; virtual;
     function LoadFile(Filename: String): Integer; virtual;
     function Run: Integer; virtual;
 
