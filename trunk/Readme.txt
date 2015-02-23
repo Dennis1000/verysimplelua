@@ -5,6 +5,8 @@ VerySimple.Lua - Lua 5.3.0 for Delphi XE5-XE7
 http://blog.spreendigital.de/2015/02/18/verysimple-lua-2-0-a-cross-platform-lua-5-3-0-wrapper-for-delphi-xe5-xe7/
 
 History
+2.0.1   DS      Fix: fixed Register function 
+                Added Example 6 - Call a Lua function
 2.0     DS      Updated Lua Lib to 5.3.0
                 Rewrite of Delphi register functions
                 Removed Class only functions
