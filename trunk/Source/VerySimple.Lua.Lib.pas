@@ -861,7 +861,7 @@ LUALIB_API void (luaL_openlib) (L: lua_State; const char *libname,
   function lua_isnoneornil(L: lua_State; n: Integer): Boolean; inline;
   procedure lua_pushliteral(L: lua_State; s: MarshaledAString); inline;
   procedure lua_pushglobaltable(L: lua_State); inline;
-  function lua_tostring(L: lua_State; i: Integer): MarshaledAString; inline;
+  function lua_tostring(L: lua_State; i: Integer): MarshaledAString;
   procedure lua_insert(L: lua_State; idx: Integer); inline;
   procedure lua_remove(L: lua_State; idx: Integer); inline;
   procedure lua_replace(L: lua_State; idx: Integer); inline;
