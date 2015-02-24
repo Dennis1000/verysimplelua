@@ -636,18 +636,6 @@ begin
 end;
 
 
-
-
-
-
-
-
-
-
-
-
-
-
 (*
 ** Dynamic library manipulation
 *)
@@ -709,6 +697,7 @@ begin
   lua_isnumber := GetAddress('lua_isnumber');
   lua_isstring := GetAddress('lua_isstring');
   lua_iscfunction := GetAddress('lua_iscfunction');
+  lua_isinteger := GetAddress('lua_isinteger');
   lua_isuserdata := GetAddress('lua_isuserdata');
   lua_type  := GetAddress('lua_type');
   lua_typename := GetAddress('lua_typename');
