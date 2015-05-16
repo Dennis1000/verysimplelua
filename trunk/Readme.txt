@@ -1,10 +1,11 @@
 =============================================
-VerySimple.Lua - Lua 5.3.0 for Delphi XE5-XE7
+VerySimple.Lua - Lua 5.3.0 for Delphi XE5-XE8
 =============================================
 (c) 2009-2015 Dennis D. Spreen
 http://blog.spreendigital.de/2015/02/18/verysimple-lua-2-0-a-cross-platform-lua-5-3-0-wrapper-for-delphi-xe5-xe7/
 
 History
+2.0.3   DS      Fix XE5 - Added Pointer cast for RegisterFunc
 2.0.2   DS      Fix: added missing lua_isinteger function
 2.0.1   DS      Fix: fixed Register function 
                 Added Example 6 - Call a Lua function
@@ -26,7 +27,7 @@ History
 1.0     DS      Initial Release
 
 
-This is a Lua Wrapper for Delphi XE5-XE7 which 
+This is a Lua Wrapper for Delphi XE5-XE8 which 
 automatically creates OOP callback functions for Delphi <-> Lua:
 
 

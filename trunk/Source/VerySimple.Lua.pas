@@ -392,7 +392,7 @@ end;
 
 class procedure TVerySimpleLua.RegisterClassFunction(L: lua_State; AObject: TObject; Func, FuncName: String);
 begin
-  RegisterFunction(L, AObject.ClassType, AObject.ClassType.MethodAddress(Func), FuncName);
+  RegisterFunction(L, Pointer(AObject.ClassType), AObject.ClassType.MethodAddress(Func), FuncName);
 end;
 
 
@@ -505,7 +505,7 @@ begin
           if (LMethod.IsStatic) and (LMethod.CallingConvention = ccCdecl) then
               RegisterFunction(L, lua_CFunction(AObject.MethodAddress(LMethod.Name)), LMethod.Name)
             else
-              RegisterFunction(L, AObject.ClassType, AObject.ClassType.MethodAddress(LMethod.Name), LMethod.Name);
+              RegisterFunction(L, Pointer(AObject.ClassType), AObject.ClassType.MethodAddress(LMethod.Name), LMethod.Name);
     end;
   finally
     LContext.Free;
