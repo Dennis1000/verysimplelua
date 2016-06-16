@@ -693,7 +693,7 @@ var
 
   function luaL_newmetatable(L: lua_State; const tname: MarshaledAString): Integer; cdecl; external LUA_LIBRARY;
   procedure luaL_setmetatable(L: lua_State; const tname: MarshaledAString); cdecl; external LUA_LIBRARY;
-  procedure luaL_testudata(L: lua_State; ud: Integer; const tname: MarshaledAString); cdecl; external LUA_LIBRARY;
+  function luaL_testudata(L: lua_State; ud: Integer; const tname: MarshaledAString): Pointer; cdecl; external LUA_LIBRARY;
   function luaL_checkudata(L: lua_State; ud: Integer; const tname: MarshaledAString): Pointer; cdecl; external LUA_LIBRARY;
 
   procedure luaL_where(L: lua_State; lvl: Integer); cdecl; external LUA_LIBRARY;

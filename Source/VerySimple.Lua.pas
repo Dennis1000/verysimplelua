@@ -12,6 +12,7 @@ History
 2.1     DS      Added [hidden] attribute
                 Added OnError property
                 Fixed MULTIRET lua call
+                Fixed function luaL_testudata
 2.0.3   DS      Fix XE5 - Added Pointer cast for RegisterFunc
 2.0.2   DS      Fix: added missing lua_isinteger function
 2.0.1   DS      Fix: fixed Register function
