@@ -182,7 +182,7 @@ type
 implementation
 
 uses
-  System.TypInfo, FMx.Dialogs;
+  System.TypInfo;
 
 const
   ChunkSize = 4096;
