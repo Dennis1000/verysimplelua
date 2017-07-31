@@ -106,6 +106,7 @@ type
     function DoCall(L: Lua_State; NArg, NRes: Integer): Integer; virtual;
     function DoStream(Stream: TStream; Size:Int64=0; ChunkName: String=''): Integer; virtual;
     function LoadFile(Filename: String): Integer; virtual;
+    function LoadString(Value: String): Integer; virtual;
     function Run: Integer; virtual;
 
     // functions for manually registering new lua functions
@@ -1001,6 +1002,15 @@ begin
   luaL_pushresultsize := GetAddress('luaL_pushresultsize');
   luaL_buffinitsize := GetAddress('luaL_buffinitsize');
 {$ENDIF}
+end;
+
+function TVerySimpleLua.LoadString(Value: String): Integer;
+var
+  Marshall: TMarshaller;
+begin
+  if not Opened then
+    Open;
+  Result := luaL_loadstring(LuaState, Marshall.AsAnsi(Value).ToPointer);
 end;
 
 class function TVerySimpleLua.LuaLibraryLoaded: Boolean;
