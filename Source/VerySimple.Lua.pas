@@ -595,7 +595,7 @@ begin
           if (LMethod.IsStatic) and (LMethod.CallingConvention = ccCdecl) then
               RegisterFunction(L, lua_CFunction(AObject.MethodAddress(LMethod.Name)), LMethod.Name)
             else
-              RegisterFunction(L, AObject.ClassType, AObject.ClassType.MethodAddress(LMethod.Name), LMethod.Name);
+              RegisterFunction(L, Pointer(AObject.ClassType), AObject.ClassType.MethodAddress(LMethod.Name), LMethod.Name);
     end;
   finally
     LContext.Free;
