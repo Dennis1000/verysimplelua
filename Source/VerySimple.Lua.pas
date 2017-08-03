@@ -84,6 +84,7 @@ type
     FOpened: Boolean;
   protected
     procedure DoPrint(Msg: String); virtual;
+    procedure DoError(Msg: String); virtual;
     function Report(L: Lua_State; Status: Integer): Integer; virtual;
 
     // Internal package registration
@@ -106,6 +107,7 @@ type
     function DoCall(L: Lua_State; NArg, NRes: Integer): Integer; virtual;
     function DoStream(Stream: TStream; Size:Int64=0; ChunkName: String=''): Integer; virtual;
     function LoadFile(Filename: String): Integer; virtual;
+    function LoadString(Value: String): Integer; virtual;
     function Run: Integer; virtual;
 
     // functions for manually registering new lua functions
@@ -316,6 +318,11 @@ begin
   if Status = LUA_OK then
     Status := DoCall(L, 0, LUA_MULTRET);
   Result := Report(L, Status);
+end;
+
+procedure TVerySimpleLua.DoError(Msg: String);
+begin
+
 end;
 
 {*
@@ -595,7 +602,7 @@ begin
           if (LMethod.IsStatic) and (LMethod.CallingConvention = ccCdecl) then
               RegisterFunction(L, lua_CFunction(AObject.MethodAddress(LMethod.Name)), LMethod.Name)
             else
-              RegisterFunction(L, AObject.ClassType, AObject.ClassType.MethodAddress(LMethod.Name), LMethod.Name);
+              RegisterFunction(L, Pointer(AObject.ClassType), AObject.ClassType.MethodAddress(LMethod.Name), LMethod.Name);
     end;
   finally
     LContext.Free;
@@ -671,9 +678,10 @@ var
 begin
   if (Status <> LUA_OK)  then
   begin
+    Msg := UTF8ToString(lua_tostring(L, -1));
+    DoError(Msg);
     if Assigned(FOnError) then
     begin
-      Msg := UTF8ToString(lua_tostring(L, -1));
       FOnError(Msg);
     end;
     lua_pop(L, 1);  //* remove message
@@ -1001,6 +1009,15 @@ begin
   luaL_pushresultsize := GetAddress('luaL_pushresultsize');
   luaL_buffinitsize := GetAddress('luaL_buffinitsize');
 {$ENDIF}
+end;
+
+function TVerySimpleLua.LoadString(Value: String): Integer;
+var
+  Marshall: TMarshaller;
+begin
+  if not Opened then
+    Open;
+  Result := luaL_loadstring(LuaState, Marshall.AsAnsi(Value).ToPointer);
 end;
 
 class function TVerySimpleLua.LuaLibraryLoaded: Boolean;
