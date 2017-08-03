@@ -84,6 +84,7 @@ type
     FOpened: Boolean;
   protected
     procedure DoPrint(Msg: String); virtual;
+    procedure DoError(Msg: String); virtual;
     function Report(L: Lua_State; Status: Integer): Integer; virtual;
 
     // Internal package registration
@@ -317,6 +318,11 @@ begin
   if Status = LUA_OK then
     Status := DoCall(L, 0, LUA_MULTRET);
   Result := Report(L, Status);
+end;
+
+procedure TVerySimpleLua.DoError(Msg: String);
+begin
+
 end;
 
 {*
@@ -672,9 +678,10 @@ var
 begin
   if (Status <> LUA_OK)  then
   begin
+    Msg := UTF8ToString(lua_tostring(L, -1));
+    DoError(Msg);
     if Assigned(FOnError) then
     begin
-      Msg := UTF8ToString(lua_tostring(L, -1));
       FOnError(Msg);
     end;
     lua_pop(L, 1);  //* remove message
