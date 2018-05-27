@@ -809,6 +809,7 @@ begin
   if not Opened then
     Open;
   Result := lual_loadfile(LuaState, Marshall.AsAnsi(Filename).ToPointer);
+  DoError(UTF8ToString(lua_tostring(LuaState, -1)));
 end;
 
 
@@ -1018,6 +1019,7 @@ begin
   if not Opened then
     Open;
   Result := luaL_loadstring(LuaState, Marshall.AsAnsi(Value).ToPointer);
+  DoError(UTF8ToString(lua_tostring(LuaState, -1)));
 end;
 
 class function TVerySimpleLua.LuaLibraryLoaded: Boolean;
