@@ -4,7 +4,7 @@
  * @copyright   Copyright (c) 2009-2020 Dennis D. Spreen
  * @license     Mozilla Public License Version 2.0
  * @author      Dennis D. Spreen <dennis@spreendigital.de>
- * @version     3.0
+ * @version     3.0 Beta 1
  * @url		      https://blog.spreendigital.de/2020/06/01/verysimple-lua-3-0-a-cross-platform-lua-5-4-0-wrapper-for-delphi-10-4/
  */
 

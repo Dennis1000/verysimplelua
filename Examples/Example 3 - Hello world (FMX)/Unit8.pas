@@ -4,7 +4,8 @@ interface
 
 uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
-  FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.StdCtrls, FMX.Layouts, FMX.Memo;
+  FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.StdCtrls, FMX.Layouts, FMX.Memo,
+  FMX.Memo.Types, FMX.Controls.Presentation, FMX.ScrollBox;
 
 type
   TForm8 = class(TForm)
@@ -26,7 +27,7 @@ implementation
 {$R *.fmx}
 
 uses
-  VerySimple.Lua, VerySimple.Lua.Lib, System.IOUtils;
+  VerySimple.Lua, System.IOUtils;
 
 
 procedure TForm8.Button1Click(Sender: TObject);
@@ -36,12 +37,9 @@ begin
   Lua := TVerySimpleLua.Create;
 
   {$IF defined(WIN32)}
-  Lua.LibraryPath :=  '..\..\..\..\DLL\WIN32\' + LUA_LIBRARY;
-  Lua.FilePath := '..\..\';
-
+  Lua.LibraryPath :=  '..\..\DLL\WIN32\' + LUA_LIBRARY;
   {$ELSEIF defined(WIN64)}
-  Lua.LibraryPath :=  '..\..\..\..\DLL\WIN64\' + LUA_LIBRARY;
-  Lua.FilePath := '..\..\';
+  Lua.LibraryPath :=  '..\..\DLL\WIN64\' + LUA_LIBRARY;
   {$ENDIF}
 
   Lua.OnPrint := OnPrint; // Redirect console output to memo

@@ -10,11 +10,14 @@ object Form8: TForm8
   DesignerMasterStyle = 0
   object Memo1: TMemo
     Touch.InteractiveGestures = [Pan, LongTap, DoubleTap]
+    DataDetectorTypes = []
     Align = Client
     Size.Width = 640.000000000000000000
     Size.Height = 440.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 1
+    Viewport.Width = 636.000000000000000000
+    Viewport.Height = 436.000000000000000000
   end
   object Button1: TButton
     Align = Bottom

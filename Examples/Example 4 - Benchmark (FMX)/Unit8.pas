@@ -4,7 +4,8 @@ interface
 
 uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
-  FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.StdCtrls, FMX.Layouts, FMX.Memo;
+  FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs, FMX.StdCtrls, FMX.Layouts, FMX.Memo,
+  FMX.Memo.Types, FMX.Controls.Presentation, FMX.ScrollBox;
 
 type
   TForm8 = class(TForm)
@@ -26,7 +27,7 @@ implementation
 {$R *.fmx}
 
 uses
-  VerySimple.Lua, VerySimple.Lua.Lib, System.IOUtils, MyLua;
+  VerySimple.Lua, System.IOUtils, MyLua;
 
 
 procedure TForm8.Button1Click(Sender: TObject);
