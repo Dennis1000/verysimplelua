@@ -2,15 +2,21 @@ program Example1;
 {$APPTYPE CONSOLE}
 
 uses
-  SysUtils,
-  Classes,
-  VerySimple.Lua in '..\..\Source\VerySimple.Lua.pas',
-  VerySimple.Lua.Lib in '..\..\Source\VerySimple.Lua.Lib.pas';
+  System.SysUtils, System.Classes,
+  VerySimple.Lua in '..\..\Source\VerySimple.Lua.pas';
 
 var
   Lua: TVerySimpleLua;
 
-function LuaAdd(L: lua_State; x, y: integer): integer;
+const
+{$IFDEF Win64}
+  PLATFORM = 'Win64';
+{$ELSE}
+  PLATFORM = 'Win32';
+{$ENDIF}
+
+
+function LuaAdd(L: TLuaState; X, Y: Integer): Integer;
 begin
   lua_getglobal(L, 'add'); // name of the function
   lua_pushinteger(L, x);  // first parameter
@@ -23,17 +29,17 @@ end;
 
 begin
   try
-    (* Example 6 - Call a lua function *)
+    // Example 6 - Call a lua function
     Lua := TVerySimpleLua.Create;
-    Lua.LibraryPath := '..\..\DLL\Win32\' + LUA_LIBRARY;
+    Lua.LibraryPath := '..\..\DLL\' + PLATFORM + '\' + LUA_LIBRARY;
     Lua.DoFile('example6.lua');
 
     Writeln(LuaAdd(Lua.LuaState, 10, 20));
     Lua.Free;
-    readln;
+    Readln;
 
   except
     on E: Exception do
-      writeln(E.ClassName, ': ', E.Message);
+      Writeln(E.ClassName, ': ', E.Message);
   end;
 end.

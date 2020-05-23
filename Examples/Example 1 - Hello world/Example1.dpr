@@ -2,25 +2,30 @@ program Example1;
 {$APPTYPE CONSOLE}
 
 uses
-  SysUtils,
-  Classes,
-  VerySimple.Lua in '..\..\Source\VerySimple.Lua.pas',
-  VerySimple.Lua.Lib in '..\..\Source\VerySimple.Lua.Lib.pas';
+  System.SysUtils, System.Classes,
+  VerySimple.Lua in '..\..\Source\VerySimple.Lua.pas';
 
 var
   Lua: TVerySimpleLua;
 
+const
+{$IFDEF Win64}
+  PLATFORM = 'Win64';
+{$ELSE}
+  PLATFORM = 'Win32';
+{$ENDIF}
+
 begin
   try
-    (* Example 1 - Simple Lua Script Execution *)
+    // Example 1 - Simple Lua script execution
     Lua := TVerySimpleLua.Create;
-    Lua.LibraryPath := '..\..\DLL\Win32\' + LUA_LIBRARY;
+    Lua.LibraryPath := '..\..\DLL\' + PLATFORM + '\' + LUA_LIBRARY;
     Lua.DoFile('example1.lua');
     Lua.Free;
-    readln;
+    Readln;
 
   except
     on E: Exception do
-      writeln(E.ClassName, ': ', E.Message);
+      Writeln(E.ClassName, ': ', E.Message);
   end;
 end.

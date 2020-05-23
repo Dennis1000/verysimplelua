@@ -9,19 +9,17 @@ uses
   MyLua in 'MyLua.pas',
   MyPackage in 'MyPackage.pas',
   MyPackage2 in 'MyPackage2.pas',
-  VerySimple.Lua.Lib in '..\..\Source\VerySimple.Lua.Lib.pas',
   VerySimple.Lua in '..\..\Source\VerySimple.Lua.pas';
 
 var
   MyLua: TMyLua;
 begin
   try
-    { TODO -oUser -cConsole Main : Insert code here }
-
+    // Example 5 - create a Lua package
     MyLua := TMyLua.Create;
     MyLua.DoFile('example5.lua');
     MyLua.Free;
-    readln;
+    Readln;
 
   except
     on E: Exception do

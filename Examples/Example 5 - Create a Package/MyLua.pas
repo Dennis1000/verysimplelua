@@ -5,7 +5,7 @@ unit MyLua;
 interface
 
 uses
-  VerySimple.Lua, VerySimple.Lua.Lib, System.SysUtils, MyPackage, MyPackage2;
+  VerySimple.Lua, System.SysUtils, MyPackage, MyPackage2;
 
 type
   // MyLua example class
@@ -21,11 +21,20 @@ type
 
 implementation
 
+
+const
+{$IFDEF Win64}
+  PLATFORM = 'Win64';
+{$ELSE}
+  PLATFORM = 'Win32';
+{$ENDIF}
+
 constructor TMyLua.Create;
 begin
   inherited;
 
-  LibraryPath := '..\..\DLL\Win32\' + LUA_LIBRARY;
+  LibraryPath := '..\..\DLL\' + PLATFORM + '\' + LUA_LIBRARY;
+
   MyPackage := TMyPackage.Create;
   MyPackage2 := TMyPackage2.Create;
 end;

@@ -1,14 +1,18 @@
 {
 /**
  * @package     VerySimple.Lua
- * @copyright   Copyright (c) 2009-2015 Dennis D. Spreen (http://blog.spreendigital.de/)
+ * @copyright   Copyright (c) 2009-2020 Dennis D. Spreen
  * @license     Mozilla Public License Version 2.0
  * @author      Dennis D. Spreen <dennis@spreendigital.de>
- * @version     2.1
- * @url		http://blog.spreendigital.de/2015/02/18/verysimple-lua-2-0-a-cross-platform-lua-5-3-0-wrapper-for-delphi-xe5-xe7/
+ * @version     3.0
+ * @url		      https://blog.spreendigital.de/2020/06/01/verysimple-lua-3-0-a-cross-platform-lua-5-4-0-wrapper-for-delphi-10-4/
  */
 
 History
+3.0     DS      Updated to Lua 5.4.0
+                Separated Lua.h and implementation files (*.inc-files)
+                Removed VerySimple.Lua.Lib.pas
+
 2.1     DS      Added [hidden] attribute
                 Added OnError property
                 Fixed MULTIRET lua call
@@ -21,6 +25,7 @@ History
                 Removed Class only functions
                 Removed a lot of convenience overloaded functions
                 Support for mobile compiler
+
 1.4     DS      Rewrite of Lua function calls, they use now published static
                 methods, no need for a Callbacklist required anymore
                 Added Package functions
@@ -33,7 +38,7 @@ History
                 function calls
 1.0     DS      Initial Release
 
-Copyright 2009-2016  Dennis D. Spreen (email: dennis@spreendigital.de)
+Copyright 2009-2020  Dennis D. Spreen (email: dennis@spreendigital.de)
 
 VerySimple.Lua is distributed under the terms of the Mozilla Public License,
 v. 2.0. If a copy of the MPL was not distributed with your software,
@@ -51,20 +56,43 @@ uses
 {$IF defined(POSIX)}
   Posix.Dlfcn, Posix.SysTypes, Posix.StdDef,
 {$ENDIF}
-
 {$IF defined(MSWINDOWS)}
   Winapi.Windows,
-{$ELSEIF defined(MACOS)}
-  {$IFDEF IOS}
+{$ENDIF}
+  System.Rtti, System.Classes, System.SysUtils, System.IOUtils, Generics.Collections;
+
+
+const
+{$IF defined(MSWINDOWS)}  // Microsoft Windows
+  LUA_LIBRARY = 'lua5.4.0.dll';
+
+{$ELSEIF defined(MACOS)}  // Apple
+  {$IFDEF IOS}  // iOS
     {$DEFINE STATICLIBRARY}
+    {$IFDEF CPUARM} // real iOS device
+      LUA_LIBRARY = 'liblua.a';
+    {$ELSE} // iOS Simulator
+      LUA_LIBRARY = 'liblua_sim.a';
+    {$ENDIF}
+  {$ELSE} // MacOS
+    LUA_LIBRARY = 'liblua5.4.0.dylib';
   {$ENDIF}
 
-{$ELSEIF defined(ANDROID)}
+{$ELSEIF defined(ANDROID)}  // Android
+  LUA_LIBRARY = 'liblua.so';
 {$ENDIF}
-  System.Rtti, System.Classes, System.SysUtils, System.IOUtils, Generics.Collections,
-  VerySimple.Lua.Lib;
+
+
+// Include Lua header definitions
+{$include 'VerySimple.Lua.luaconf.h.inc'}
+{$include 'VerySimple.Lua.lua.h.inc'}
+{$include 'VerySimple.Lua.lualib.h.inc'}
+{$include 'VerySimple.Lua.lauxlib.h.inc'}
+
 
 type
+  TLuaState = lua_state;
+
   HiddenAttribute = class(TCustomAttribute);
 
   TOnLuaPrint = procedure(Msg: String) of object;
@@ -80,7 +108,7 @@ type
     FOnError: TOnLuaPrint;
     FFilePath: String;
     FLibraryPath: String;
-    FAutoRegister: boolean;
+    FAutoRegister: Boolean;
     FOpened: Boolean;
   protected
     procedure DoPrint(Msg: String); virtual;
@@ -187,6 +215,11 @@ implementation
 uses
   System.TypInfo;
 
+// Lua implementation files
+{$include 'VerySimple.Lua.lua.h.pas.inc'}
+{$include 'VerySimple.Lua.lauxlib.h.pas.inc'}
+
+
 const
   ChunkSize = 4096;
 
@@ -206,9 +239,9 @@ type
 var
   LibraryHandle: HMODULE;
 
-{*
-** Message handler used to run all chunks
-*}
+//
+// Message handler used to run all chunks
+//
 function MsgHandler(L: Lua_State): Integer; cdecl;
 var
   Msg: MarshaledAString;
@@ -269,8 +302,6 @@ end;
 
 { TVerySimpleLua }
 
-
-
 procedure TVerySimpleLua.Close;
 begin
   if not FOpened then
@@ -298,7 +329,6 @@ end;
 //
 // Dispose Lua instance
 //
-
 destructor TVerySimpleLua.Destroy;
 begin
   Close;
@@ -312,7 +342,6 @@ end;
 // @param       String  Filename        Lua Script file name
 // @return      Integer
 //
-
 function TVerySimpleLua.DoChunk(L: Lua_State; Status: Integer): Integer;
 begin
   if Status = LUA_OK then
@@ -378,7 +407,7 @@ function LuaReader(L: lua_State; ud: Pointer; sz: Psize_t): Pointer; cdecl;
 var
   ChunkStream: TLuaChunkStream;
 begin
-  ChunkStream := Ud;
+  ChunkStream := ud;
   Result := ChunkStream.Read(sz);
 end;
 
@@ -639,7 +668,7 @@ var
 begin
   PushFunction(L, Data, Code);
 
-  // set table field
+  // Set table field
   lua_setfield(L, -2, Marshall.AsAnsi(FuncName).ToPointer);
 end;
 
@@ -696,10 +725,10 @@ begin
   lua_getglobal(L, 'package');  // get local package table
   lua_getfield(L, -1 , 'preload');  // get preload field
 
-  // prepare Closure value (Object Object Pointer)
+  // Prepare Closure value (Object Object Pointer)
   lua_pushlightuserdata(L, AObject);
 
-  // set new Lua function with Closure values
+  // Set new Lua function with Closure values
   lua_pushcclosure(L, LuaLoadPackage, 1);
 
   lua_setfield(L, -2 , Marshall.AsAnsi(PackageName).ToPointer);
@@ -839,6 +868,7 @@ begin
   lua_close := GetAddress('lua_close');
   lua_newthread := GetAddress('lua_newthread');
   lua_atpanic := GetAddress('lua_atpanic');
+  lua_resetthread := GetAddress('lua_resetthread');
   lua_version := GetAddress('lua_version');
 
   lua_absindex := GetAddress('lua_absindex');
@@ -893,9 +923,9 @@ begin
   lua_rawgetp := GetAddress('lua_rawgetp');
 
   lua_createtable := GetAddress('lua_createtable');
-  lua_newuserdata := GetAddress('lua_newuserdata');
+  lua_newuserdatauv := GetAddress('lua_newuserdatauv');
   lua_getmetatable := GetAddress('lua_getmetatable');
-  lua_getuservalue := GetAddress('lua_getuservalue');
+  lua_getiuservalue := GetAddress('lua_getiuservalue');
 
   lua_setglobal := GetAddress('lua_setglobal');
   lua_settable := GetAddress('lua_settable');
@@ -905,7 +935,7 @@ begin
   lua_rawseti := GetAddress('lua_rawseti');
   lua_rawsetp := GetAddress('lua_rawsetp');
   lua_setmetatable := GetAddress('lua_setmetatable');
-  lua_setuservalue := GetAddress('lua_setuservalue');
+  lua_setiuservalue := GetAddress('lua_setiuservalue');
 
   lua_callk := GetAddress('lua_callk');
   lua_pcallk := GetAddress('lua_pcallk');
@@ -942,6 +972,9 @@ begin
   lua_gethookmask := GetAddress('lua_gethookmask');
   lua_gethookcount := GetAddress('lua_gethookcount');
 
+  lua_setwarnf := GetAddress('lua_setwarnf');
+  lua_warning := GetAddress('lua_warning');
+
   luaopen_base := GetAddress('luaopen_base');
   luaopen_coroutine := GetAddress('luaopen_coroutine');
   luaopen_table := GetAddress('luaopen_table');
@@ -949,7 +982,6 @@ begin
   luaopen_os := GetAddress('luaopen_os');
   luaopen_string := GetAddress('luaopen_string');
   luaopen_utf8 := GetAddress('luaopen_utf8');
-  luaopen_bit32 := GetAddress('luaopen_bit32');
   luaopen_math := GetAddress('luaopen_math');
   luaopen_debug := GetAddress('luaopen_debug');
   luaopen_package := GetAddress('luaopen_package');
@@ -1008,6 +1040,7 @@ begin
   luaL_pushresult := GetAddress('luaL_pushresult');
   luaL_pushresultsize := GetAddress('luaL_pushresultsize');
   luaL_buffinitsize := GetAddress('luaL_buffinitsize');
+
 {$ENDIF}
 end;
 
@@ -1100,8 +1133,11 @@ end;
 
 destructor TLuaChunkStream.Destroy;
 begin
-  Chunk.Free;
-  inherited;
+  try
+    Chunk.Free;
+  finally
+    inherited;
+  end;
 end;
 
 function TLuaChunkStream.Read(sz: Psize_t): Pointer;

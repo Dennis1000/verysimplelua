@@ -5,34 +5,34 @@ unit MyLua;
 interface
 
 uses
-  VerySimple.Lua, VerySimple.Lua.Lib;
+  VerySimple.Lua;
 
 type
   // MyLua example class
   TMyLua = class(TVerySimpleLua)
   published
-    // lua functions this published methods are automatically added
-    // to the lua function table if called with TLua.Create(True) or Create()
-    function HelloWorld(LuaState: lua_State): Integer;
-    class function HelloWorld2(LuaState: lua_State): Integer;
-    class function HelloWorld3(LuaState: lua_State): Integer; cdecl; static;
+    // These published methods are automatically added  to the lua
+    // function table if called with TLua.Create(True) or Create()
+    function HelloWorld(LuaState: TLuaState): Integer;
+    class function HelloWorld2(LuaState: TLuaState): Integer;
+    class function HelloWorld3(LuaState: TLuaState): Integer; cdecl; static;
   end;
 
 implementation
 
 // Print arguments and return two values (101 and 102)
-function TMyLua.HelloWorld(LuaState: lua_State): Integer;
+function TMyLua.HelloWorld(LuaState: TLuaState): Integer;
 var
   ArgCount: Integer;
-  I: integer;
+  I: Integer;
 begin
   ArgCount := Lua_GetTop(LuaState);
 
-  writeln('Hello World from Delphi');
-  writeln('Arguments: ', ArgCount);
+  Writeln('Hello World from Delphi');
+  Writeln('Arguments: ', ArgCount);
 
   for I := 1 to ArgCount do
-    writeln('Arg', I, ': ', Lua_ToInteger(LuaState, I));
+    Writeln('Arg', I, ': ', Lua_ToInteger(LuaState, I));
 
   // Clear stack
   Lua_Pop(LuaState, Lua_GetTop(LuaState));
@@ -45,16 +45,16 @@ end;
 
 
 //  Print out a Hello World text
-class function TMyLua.HelloWorld2(LuaState: lua_State): Integer;
+class function TMyLua.HelloWorld2(LuaState: TLuaState): Integer;
 begin
-  writeln('Hello World2 from Delphi');
+  Writeln('Hello World2 from Delphi');
   Result := 0;
 end;
 
 //  Print out a Hello World text
-class function TMyLua.HelloWorld3(LuaState: lua_State): Integer;
+class function TMyLua.HelloWorld3(LuaState: TLuaState): Integer;
 begin
-  writeln('Hello World3 from Delphi');
+  Writeln('Hello World3 from Delphi');
   Result := 0;
 end;
 

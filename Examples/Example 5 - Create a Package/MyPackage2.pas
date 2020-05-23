@@ -3,13 +3,14 @@ unit MyPackage2;
 interface
 
 uses
-  VerySimple.Lua, VerySimple.Lua.Lib;
+  VerySimple.Lua;
 
 {$M+}
+
 type
   TMyPackage2 = class
   published
-    function Double(L: lua_State): Integer;
+    function Double(L: TLuaState): Integer;
   end;
 
 
@@ -17,7 +18,7 @@ implementation
 
 { TMyPackage2 }
 
-function TMyPackage2.Double(L: lua_State): Integer;
+function TMyPackage2.Double(L: TLuaState): Integer;
 var
   ArgCount: Integer;
   Value: Integer;

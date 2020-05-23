@@ -1,23 +1,27 @@
 ==============================================
-VerySimple.Lua - Lua 5.3.0 for Delphi XE5-10.1
+VerySimple.Lua - Lua 5.4.0 for Delphi XE5-10.4
 ==============================================
-(c) 2009-2016 Dennis D. Spreen
-http://blog.spreendigital.de/2015/02/18/verysimple-lua-2-0-a-cross-platform-lua-5-3-0-wrapper-for-delphi-xe5-xe7/
+(c) 2009-2020 Dennis D. Spreen
+https://blog.spreendigital.de/2020/06/01/verysimple-lua-3-0-a-cross-platform-lua-5-4-0-wrapper-for-delphi-10-4/
 
 History
+3.0     DS      Updated to Lua 5.4.0
+                Separated Lua.h and implementation files (*.inc-files)
+                Removed VerySimple.Lua.Lib.pas
+
 2.1     DS      Added [hidden] attribute
                 Added OnError property
                 Fixed MULTIRET lua call
-		Fixed function luaL_testudata
+                Fixed function luaL_testudata
 2.0.3   DS      Fix XE5 - Added Pointer cast for RegisterFunc
 2.0.2   DS      Fix: added missing lua_isinteger function
-2.0.1   DS      Fix: fixed Register function 
-                Added Example 6 - Call a Lua function
+2.0.1   DS      Fix: fixed Register function
 2.0     DS      Updated Lua Lib to 5.3.0
                 Rewrite of Delphi register functions
                 Removed Class only functions
                 Removed a lot of convenience overloaded functions
                 Support for mobile compiler
+
 1.4     DS      Rewrite of Lua function calls, they use now published static
                 methods, no need for a Callbacklist required anymore
                 Added Package functions
@@ -30,13 +34,12 @@ History
                 function calls
 1.0     DS      Initial Release
 
-
-This is a Lua Wrapper for Delphi XE5-D10.1 which 
+This is a Lua Wrapper for Delphi XE5-D10.4 which 
 automatically creates OOP callback functions for Delphi <-> Lua:
 
 
 uses
-  VerySimple.Lua, VerySimple.Lua.Lib;
+  VerySimple.Lua;
 
 type
   TMyLua = class(TVerySimpleLua)
@@ -88,7 +91,7 @@ print (p2);
 
 
 **************************************************************************
-Copyright 2016  Dennis D. Spreen (http://blog.spreendigital.de/)
+Copyright 2020  Dennis D. Spreen (https://blog.spreendigital.de/)
 
 VerySimple.Lua is distributed under the terms of the Mozilla Public License, 
 v. 2.0. If a copy of the MPL was not distributed with your software, 
