@@ -8,19 +8,20 @@ uses
 var
   Lua: TVerySimpleLua;
 
+// Add deployment files with Project | Deployment | Linux 64-bit platform
+// Add these files: "DLL\Linux\liblua.so" and "example7.lua"
+
 const
-{$IF defined(WIN32)}
-  LIBRARYPATH = '..\..\DLL\Win32\' + LUA_LIBRARY;
-{$ELSEIF defined(WIN64)}
-  LIBRARYPATH = '..\..\DLL\Win64\' + LUA_LIBRARY;
+{$IF defined(LINUX)}
+  LIBRARYPATH = LUA_LIBRARY;
 {$IFEND}
 
 begin
   try
-    // Example 1 - Simple Lua script execution
+    // Example 7 - Simple Lua script execution with Linux
     Lua := TVerySimpleLua.Create;
     Lua.LibraryPath := LIBRARYPATH;
-    Lua.DoFile('example1.lua');
+    Lua.DoFile('example7.lua');
     Lua.Free;
     Readln;
 

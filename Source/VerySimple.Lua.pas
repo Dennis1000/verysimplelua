@@ -77,8 +77,9 @@ const
   {$ELSE} // MacOS
     LUA_LIBRARY = 'liblua5.4.0.dylib';
   {$ENDIF}
-
 {$ELSEIF defined(ANDROID)}  // Android
+  LUA_LIBRARY = 'liblua.so';
+{$ELSEIF defined(LINUX)}  // Linux
   LUA_LIBRARY = 'liblua.so';
 {$ENDIF}
 
