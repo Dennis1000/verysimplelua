@@ -9,7 +9,7 @@ var
   Lua: TVerySimpleLua;
 
 // Add deployment files with Project | Deployment | Linux 64-bit platform
-// Add these files: "DLL\Linux\liblua.so" and "example7.lua"
+// Add these files: "DLL\Linux\liblua5.4.0.so" and "example7.lua"
 
 const
 {$IF defined(LINUX)}

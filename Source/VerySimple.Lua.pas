@@ -80,7 +80,7 @@ const
 {$ELSEIF defined(ANDROID)}  // Android
   LUA_LIBRARY = 'liblua.so';
 {$ELSEIF defined(LINUX)}  // Linux
-  LUA_LIBRARY = 'liblua.so';
+  LUA_LIBRARY = 'liblua5.4.0.so';
 {$ENDIF}
 
 
