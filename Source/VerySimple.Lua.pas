@@ -62,9 +62,17 @@ uses
   System.Rtti, System.Classes, System.SysUtils, System.IOUtils, Generics.Collections;
 
 
+// Include Lua header definitions
+{$include 'VerySimple.Lua.luaconf.h.inc'}
+{$include 'VerySimple.Lua.lua.h.inc'}
+{$include 'VerySimple.Lua.lualib.h.inc'}
+{$include 'VerySimple.Lua.lauxlib.h.inc'}
+
 const
+  LUA_VERSION_MAJORMINORRELEASE = LUA_VERSION_MAJOR + '.' + LUA_VERSION_MINOR + '.' + LUA_VERSION_RELEASE;
+
 {$IF defined(MSWINDOWS)}  // Microsoft Windows
-  LUA_LIBRARY = 'lua5.4.0.dll';
+  LUA_LIBRARY = 'lua' + LUA_VERSION_MAJORMINORRELEASE + '.dll';
 
 {$ELSEIF defined(MACOS)}  // Apple
   {$IFDEF IOS}  // iOS
@@ -75,20 +83,13 @@ const
       LUA_LIBRARY = 'liblua_sim.a';
     {$ENDIF}
   {$ELSE} // MacOS
-    LUA_LIBRARY = 'liblua5.4.0.dylib';
+    LUA_LIBRARY = 'liblua' + LUA_VERSION_LONG + '.dylib';
   {$ENDIF}
 {$ELSEIF defined(ANDROID)}  // Android
-  LUA_LIBRARY = 'liblua.so';
+  LUA_LIBRARY = 'liblua' + LUA_VERSION_LONG + '.so';
 {$ELSEIF defined(LINUX)}  // Linux
-  LUA_LIBRARY = 'liblua5.4.0.so';
+  LUA_LIBRARY = 'liblua' + LUA_VERSION_LONG + '.so';
 {$ENDIF}
-
-
-// Include Lua header definitions
-{$include 'VerySimple.Lua.luaconf.h.inc'}
-{$include 'VerySimple.Lua.lua.h.inc'}
-{$include 'VerySimple.Lua.lualib.h.inc'}
-{$include 'VerySimple.Lua.lauxlib.h.inc'}
 
 
 type
