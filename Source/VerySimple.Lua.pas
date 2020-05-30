@@ -73,7 +73,6 @@ const
 
 {$IF defined(MSWINDOWS)}  // Microsoft Windows
   LUA_LIBRARY = 'lua' + LUA_VERSION_MAJORMINORRELEASE + '.dll';
-
 {$ELSEIF defined(MACOS)}  // Apple
   {$IFDEF IOS}  // iOS
     {$DEFINE STATICLIBRARY}
@@ -83,12 +82,12 @@ const
       LUA_LIBRARY = 'liblua_sim.a';
     {$ENDIF}
   {$ELSE} // MacOS
-    LUA_LIBRARY = 'liblua' + LUA_VERSION_LONG + '.dylib';
+    LUA_LIBRARY = 'liblua' + LUA_VERSION_MAJORMINORRELEASE + '.dylib';
   {$ENDIF}
 {$ELSEIF defined(ANDROID)}  // Android
-  LUA_LIBRARY = 'liblua' + LUA_VERSION_LONG + '.so';
+  LUA_LIBRARY = 'liblua' + LUA_VERSION_MAJORMINORRELEASE + '.so';
 {$ELSEIF defined(LINUX)}  // Linux
-  LUA_LIBRARY = 'liblua' + LUA_VERSION_LONG + '.so';
+  LUA_LIBRARY = 'liblua' + LUA_VERSION_MAJORMINORRELEASE + '.so';
 {$ENDIF}
 
 
