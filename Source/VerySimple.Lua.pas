@@ -4,14 +4,16 @@
  * @copyright   Copyright (c) 2009-2021 Dennis D. Spreen
  * @license     Mozilla Public License Version 2.0
  * @author      Dennis D. Spreen <dennis@spreendigital.de>
- * @version     5.4.3 Beta 1
+ * @version     5.4.3
  * @url		https://blog.spreendigital.de/2020/06/01/verysimple-lua-3-0-a-cross-platform-lua-5-4-0-wrapper-for-delphi-10-4/
  */
 
 History
 5.4.3   DS      Updated to Lua 5.4.3
+                Developed and tested with Delphi 11 only, but may work with older Delphi versions as well.
+                Do not send issue or pull requests with modifications for compiling with older versions.
 
-3.0     DS      Updated to Lua 5.4.0
+5.4.0   DS      Updated to Lua 5.4.0
                 Separated Lua.h and implementation files (*.inc-files)
                 Removed VerySimple.Lua.Lib.pas
 

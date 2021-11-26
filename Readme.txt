@@ -1,13 +1,15 @@
-==============================================
-VerySimple.Lua - Lua 5.4 for Delphi XE5-11
-==============================================
+======================================
+VerySimple.Lua - Lua 5.4 for Delphi 11
+======================================
 (c) 2009-2021 Dennis D. Spreen
 https://blog.spreendigital.de/2020/06/01/verysimple-lua-3-0-a-cross-platform-lua-5-4-0-wrapper-for-delphi-10-4/
 
 History
 5.4.3   DS      Updated to Lua 5.4.3
+                Developed and tested with Delphi 11 only, but may work with older Delphi versions as well.
+                Do not send issue or pull requests with modifications for compiling with older versions.
 
-3.0     DS      Updated to Lua 5.4.0
+5.4.0   DS      Updated to Lua 5.4.0
                 Separated Lua.h and implementation files (*.inc-files)
                 Removed VerySimple.Lua.Lib.pas
 
@@ -36,8 +38,8 @@ History
                 function calls
 1.0     DS      Initial Release
 
-This is a Lua Wrapper for Delphi XE5-D11 which 
-automatically creates OOP callback functions for Delphi <-> Lua:
+This is a Lua Wrapper for Delphi 11 which automatically creates 
+OOP callback functions for Delphi <-> Lua:
 
 
 uses
@@ -93,7 +95,7 @@ print (p2);
 
 
 **************************************************************************
-Copyright 2020  Dennis D. Spreen (https://blog.spreendigital.de/)
+Copyright 2021  Dennis D. Spreen (https://blog.spreendigital.de/)
 
 VerySimple.Lua is distributed under the terms of the Mozilla Public License, 
 v. 2.0. If a copy of the MPL was not distributed with your software, 
