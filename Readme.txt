@@ -1,5 +1,5 @@
 ==============================================
-VerySimple.Lua - Lua 5.4.0 for Delphi XE5-11
+VerySimple.Lua - Lua 5.4 for Delphi XE5-11
 ==============================================
 (c) 2009-2021 Dennis D. Spreen
 https://blog.spreendigital.de/2020/06/01/verysimple-lua-3-0-a-cross-platform-lua-5-4-0-wrapper-for-delphi-10-4/
@@ -36,7 +36,7 @@ History
                 function calls
 1.0     DS      Initial Release
 
-This is a Lua Wrapper for Delphi XE5-D10.4 which 
+This is a Lua Wrapper for Delphi XE5-D11 which 
 automatically creates OOP callback functions for Delphi <-> Lua:
 
 

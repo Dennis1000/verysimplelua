@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 {
 /**
  * @package     VerySimple.Lua
