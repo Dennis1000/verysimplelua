@@ -21,14 +21,14 @@
 const
   LUA_VERSION_MAJOR   = '5';
   LUA_VERSION_MINOR   = '4';
-  LUA_VERSION_RELEASE = '0';
+  LUA_VERSION_RELEASE = '3';
 
   LUA_VERSION_NUM          = 504;
   LUA_VERSION_RELEASEN_NUM = (LUA_VERSION_NUM * 100 + 0);
 
   LUA_VERSION_   = 'Lua ' + LUA_VERSION_MAJOR + '.' + LUA_VERSION_MINOR;
   LUA_RELEASE    = LUA_VERSION_ + '.' + LUA_VERSION_RELEASE;
-  LUA_COPYRIGHT  = LUA_RELEASE + '  Copyright (C) 1994-2020 Lua.org, PUC-Rio';
+  LUA_COPYRIGHT  = LUA_RELEASE + '  Copyright (C) 1994-2021 Lua.org, PUC-Rio';
   LUA_AUTHORS    = 'R. Ierusalimschy, L. H. de Figueiredo, W. Celes';
 
 
@@ -52,8 +52,8 @@ const
   LUA_YIELD_     = 1;
   LUA_ERRRUN     = 2;
   LUA_ERRSYNTAX	 = 3;
-  LUA_ERRMEM	   = 4;
-  LUA_ERRERR	   = 5;
+  LUA_ERRMEM	 = 4;
+  LUA_ERRERR	 = 5;
 
 type
   lua_State = Pointer;
@@ -64,15 +64,15 @@ type
 const
   LUA_TNONE          = (-1);
 
-  LUA_TNIL	         = 0;
+  LUA_TNIL	     = 0;
   LUA_TBOOLEAN	     = 1;
   LUA_TLIGHTUSERDATA = 2;
-  LUA_TNUMBER	       = 3;
-  LUA_TSTRING	       = 4;
-  LUA_TTABLE	       = 5;
-  LUA_TFUNCTION	     = 6;
-  LUA_TUSERDATA	     = 7;
-  LUA_TTHREAD	       = 8;
+  LUA_TNUMBER        = 3;
+  LUA_TSTRING        = 4;
+  LUA_TTABLE         = 5;
+  LUA_TFUNCTION      = 6;
+  LUA_TUSERDATA      = 7;
+  LUA_TTHREAD        = 8;
 
   LUA_NUMTYPES       = 9;
 
@@ -82,9 +82,9 @@ const
 
 
 {* predefined values in the registry *}
-  LUA_RIDX_MAINTHREAD	= 1;
-  LUA_RIDX_GLOBALS	  = 2;
-  LUA_RIDX_LAST		    = LUA_RIDX_GLOBALS;
+  LUA_RIDX_MAINTHREAD = 1;
+  LUA_RIDX_GLOBALS    = 2;
+  LUA_RIDX_LAST       = LUA_RIDX_GLOBALS;
 
 
 type

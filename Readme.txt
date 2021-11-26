@@ -1,10 +1,12 @@
 ==============================================
-VerySimple.Lua - Lua 5.4.0 for Delphi XE5-10.4
+VerySimple.Lua - Lua 5.4.0 for Delphi XE5-11
 ==============================================
-(c) 2009-2020 Dennis D. Spreen
+(c) 2009-2021 Dennis D. Spreen
 https://blog.spreendigital.de/2020/06/01/verysimple-lua-3-0-a-cross-platform-lua-5-4-0-wrapper-for-delphi-10-4/
 
 History
+5.4.3   DS      Updated to Lua 5.4.3
+
 3.0     DS      Updated to Lua 5.4.0
                 Separated Lua.h and implementation files (*.inc-files)
                 Removed VerySimple.Lua.Lib.pas
